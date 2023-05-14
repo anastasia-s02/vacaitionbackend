@@ -1,0 +1,7 @@
+name: vacaition
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - langchain
+prefix: /Users/swapnilsharma/miniforge3/envs/vacaition
