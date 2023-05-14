@@ -1,8 +1,8 @@
-import cohere
+import cohere, os
 from environment import ENVIRONMENT
 
 # Get your cohere API key on: www.cohere.com
-co = cohere.Client(ENVIRONMENT.cohere_key)
+co = cohere.Client(os.environ["COHERE_KEY"])
 
 # Example query and passages
 # query = "I like to do hiking and going to the beach"

@@ -1,7 +1,7 @@
 from typing import Union
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from firebaseInterface import getUserInfo
+from firebaseInterface import getUserInfo, getQuestionnaire
 from recommendation_generator import generate_recommendation, generate_recs_for_two
 import rerank
 from modal import Stub, Secret
@@ -28,18 +28,33 @@ app.add_middleware(
 def read_root():
     return json.dumps({"Hello": "World"})
 
+@app.get("/user/{u_id}")
+def get_user(u_id: str):
+    # Fetch User Details
+    user_details = getUserInfo(u_id)
+    
+    return json.dumps({"u_id": u_id, "user_details": user_details})
+
+@app.get("/questionnaire/{u_id}")
+def get_questionnaire(u_id: str):
+    # Fetch User Details
+    quest = getQuestionnaire(u_id)
+    
+    return json.dumps({"u_id": u_id, "questionnaire": quest})
+
 @app.get("/plan/{u_id}")
 def get_plan(u_id: str):
     # Fetch User Details
     user_details = getUserInfo(u_id)
+    quest = getQuestionnaire(u_id)
     
     # Generate claude plan
-    final = generate_recommendation([3500, 3700], 
-                                    "2 weeks",
-                                    ["get adrenaline rush", "immerse into new culture"], 
-                                    "NYC",
-                                    "sunny",
-                                    "NA",
+    final = generate_recommendation(int(quest["budget"]),
+                                    quest["duration"],
+                                    quest["time"], 
+                                    quest["departFrom"],
+                                    quest["weather"],
+                                    quest["avoid"],
                                     "NA",
                                     "NA")
     
@@ -74,6 +89,7 @@ def get_buddies(u_id: str):
     # Fetch User Details
     print("Fetching user details")
     user_details = getUserInfo(u_id)
+    print(user_details)
     
     print("Getting buddies")
     # Find buddies based on similarity
