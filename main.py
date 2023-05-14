@@ -6,6 +6,7 @@ from recommendation_generator import generate_recommendation, generate_recs_for_
 import rerank
 from modal import Stub, Secret
 from modal import Image, Stub, asgi_app
+import json
 
 app = FastAPI()
 stub = Stub()
@@ -25,7 +26,7 @@ app.add_middleware(
 
 @app.get("/")
 def read_root():
-    return {"Hello": "World"}
+    return json.dumps({"Hello": "World"})
 
 @app.get("/plan/{u_id}")
 def get_plan(u_id: str):
@@ -42,7 +43,7 @@ def get_plan(u_id: str):
                                     "NA",
                                     "NA")
     
-    return {"u_id": u_id, "plan": final, "user_details": user_details}
+    return json.dumps({"u_id": u_id, "plan": final, "user_details": user_details})
 
 @app.get("/couple_plan/{u_id1}")
 def get_couple_plan(u_id1: str, u_id2: str):
@@ -66,7 +67,7 @@ def get_couple_plan(u_id1: str, u_id2: str):
                                     "sunny",
                                     "NA")
     
-    return {"u_id1": u_id1, "u_id2": u_id2, "plan": final, "user_details1": user_details1, "user_details2": user_details2}
+    return json.dumps({"u_id1": u_id1, "u_id2": u_id2, "plan": final, "user_details1": user_details1, "user_details2": user_details2})
 
 @app.get("/buddies/{u_id}")
 def get_buddies(u_id: str):
@@ -78,7 +79,7 @@ def get_buddies(u_id: str):
     # Find buddies based on similarity
     buddies = rerank.get_buddies(user_details)
     
-    return {"u_id": u_id, "buddies": buddies, "user_details": user_details}
+    return json.dumps({"u_id": u_id, "buddies": buddies, "user_details": user_details})
 
 image = Image.debian_slim().pip_install("boto3").pip_install("firebase_admin").pip_install("anthropic").pip_install("cohere")
 
