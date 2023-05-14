@@ -7,7 +7,7 @@ from environment import ENVIRONMENT
 def generate_recommendation(budget: list[int], duration: str, activities: list[str], 
                             start_location: str, weather: str, avoid_list: str, additional_info: str, passport: str):
     
-    c = anthropic.Client(ENVIRONMENT.claude_key)
+    c = anthropic.Client(os.environ["CLAUDE_KEY"])
     while True:
         try:
             resp = c.completion(
@@ -43,7 +43,7 @@ def generate_recs_for_two(budget1: list[int], duration1: str, activities1: list[
                         budget2: list[int], duration2: str, activities2: list[str], 
                         start_location2: str, weather2: str, avoid_list2: str, additional_info2: str, passport2: str):
 
-    c = anthropic.Client(ENVIRONMENT.claude_key)
+    c = anthropic.Client(os.environ["CLAUDE_KEY"])
     while True:
         try:
             resp = c.completion(
