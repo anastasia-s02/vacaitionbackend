@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from firebaseInterface import getUserInfo
 from recommendation_generator import generate_recommendation, generate_recs_for_two
 import rerank
+import json
 
 app = FastAPI()
 
@@ -38,7 +39,7 @@ def get_plan(u_id: str):
                                     "sunny",
                                     avoid_list="NA")
     
-    return {"u_id": u_id, "plan": final, "user_details": user_details}
+    return json.dumps({"u_id": u_id, "plan": final, "user_details": user_details})
 
 @app.get("/couple_plan/{u_id}")
 def get_couple_plan(u_id: str):
@@ -61,7 +62,7 @@ def get_couple_plan(u_id: str):
                                     "sunny",
                                     "NA")
     
-    return {"u_id": u_id, "plan": final, "user_details": user_details}
+    return json.dumps({"u_id": u_id, "plan": final, "user_details": user_details})
 
 @app.get("/buddies/{u_id}")
 def get_buddies(u_id: str):
