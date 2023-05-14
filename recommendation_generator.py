@@ -27,7 +27,7 @@ def generate_recommendation(budget: list[int], duration: str, activities: list[s
         model="claude-v1",
         max_tokens_to_sample=650,
     )
-    index = response_final['completion'].find('{')  # find index of first curly bracket
+    index = response_final['completion'].find('{')  
     new_text = response_final['completion'][index:]
     string = new_text.replace("'", "\"")
     final = json.loads(string)
@@ -50,6 +50,19 @@ def generate_recs_for_two(budget1: list[int], duration1: str, activities1: list[
         model="claude-v1",
         max_tokens_to_sample=800,
     )
-    return resp['completion']
+    response_final = c.completion(
+        prompt=f"{anthropic.HUMAN_PROMPT} I want you to return me this same text but in the following format:" +
+        f" {{\"name of location1\": \"all the rest of information about this location1\", \"name of location2\":" +
+        f" \"all the rest of information about this location2\", \"name of location3\": \"all the rest of information " +
+        f"about this location3\"}}. Give it to me in the exact format I specified. Keep all the escape sequences. Here is the text with 3 locations: {resp['completion']}{anthropic.AI_PROMPT}",
+        stop_sequences=[anthropic.HUMAN_PROMPT],
+        model="claude-v1",
+        max_tokens_to_sample=650,
+    )
+    index = response_final['completion'].find('{')  
+    new_text = response_final['completion'][index:]
+    string = new_text.replace("'", "\"")
+    final = json.loads(string)
+    return final
 
 
