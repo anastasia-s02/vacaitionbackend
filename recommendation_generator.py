@@ -4,7 +4,7 @@ import json
 from environment import ENVIRONMENT
 
 
-def generate_recommendation(budget: list[int], duration: str, activities: list[str], 
+def generate_recommendation(budget: str, duration: str, activities: list[str], 
                             start_location: str, weather: str, avoid_list: str, additional_info: str, passport: str):
     
     c = anthropic.Client(os.environ["CLAUDE_KEY"])
@@ -38,9 +38,9 @@ def generate_recommendation(budget: list[int], duration: str, activities: list[s
             pass
     return final
 
-def generate_recs_for_two(budget1: list[int], duration1: str, activities1: list[str], 
+def generate_recs_for_two(budget1: str, duration1: str, activities1: list[str], 
                         start_location1: str, weather1: str, avoid_list1: str, additional_info1: str, passport1: str,
-                        budget2: list[int], duration2: str, activities2: list[str], 
+                        budget2: str, duration2: str, activities2: list[str], 
                         start_location2: str, weather2: str, avoid_list2: str, additional_info2: str, passport2: str):
 
     c = anthropic.Client(os.environ["CLAUDE_KEY"])
