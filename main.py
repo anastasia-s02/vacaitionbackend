@@ -55,10 +55,10 @@ def get_plan(u_id: str):
                                     quest["departFrom"],
                                     quest["weather"],
                                     quest["avoid"],
-                                    "NA",
+                                    str(user_details),
                                     "NA")
     
-    return json.dumps({"u_id": u_id, "plan": final, "user_details": user_details})
+    return json.dumps({"u_id": u_id, "plan": final})
 
 @app.get("/couple_plan/{u_id1}")
 def get_couple_plan(u_id1: str, u_id2: str):
@@ -93,9 +93,10 @@ def get_buddies(u_id: str):
     
     print("Getting buddies")
     # Find buddies based on similarity
-    buddies = rerank.get_buddies(user_details)
+    buddies = rerank.get_buddies(u_id, user_details)
+    print(buddies[0].document['text'])
     
-    return json.dumps({"u_id": u_id, "buddies": buddies, "user_details": user_details})
+    return json.dumps({"u_id": u_id, "buddies": buddies[0].document['text']})
 
 image = Image.debian_slim().pip_install("boto3").pip_install("firebase_admin").pip_install("anthropic").pip_install("cohere")
 
