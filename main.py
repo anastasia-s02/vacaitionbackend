@@ -7,6 +7,10 @@ import rerank
 from modal import Stub, Secret
 from modal import Image, Stub, asgi_app
 import json
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = FastAPI()
 stub = Stub()
@@ -44,19 +48,23 @@ def get_questionnaire(u_id: str):
 
 @app.get("/plan/{u_id}")
 def get_plan(u_id: str):
+    print("/plan/{u_id} was called")
     # Fetch User Details
-    user_details = getUserInfo(u_id)
+    print("user_id: ", u_id)
+    # user_details = getUserInfo(u_id)
+    # print("user_details: ", user_details)
     quest = getQuestionnaire(u_id)
+    print("quest: ", quest)
     
     # Generate claude plan
-    final = generate_recommendation(int(quest["budget"]),
+    final = generate_recommendation(quest["budget"],
                                     quest["duration"],
                                     quest["time"], 
                                     quest["departFrom"],
                                     quest["weather"],
                                     quest["avoid"],
-                                    str(user_details),
-                                    "NA")
+                                    quest["additionalInfo"],
+                                    quest["countries"])
     
     return json.dumps({"u_id": u_id, "plan": final})
 

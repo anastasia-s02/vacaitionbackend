@@ -19,28 +19,30 @@ db = firestore.client()
 collection = db.collection('data')
 
 def getUserInfo(u_id: str):
-    doc = collection.document(u_id)
-    infos = doc.collection('info')
-    for info in infos.stream():
-      return info.to_dict()
+  doc = collection.document(u_id)
+  print("doc in getUserInfo:", doc)
+  infos = doc.collection('info')
+  for info in infos.stream():
+    print("\ninfo in stream:", info.to_dict())
+    return info.to_dict()
 
 def getAllUserInfo(except_id: str = None):
-    res = []
-    for doc in collection.stream():
-      if doc.id != except_id:
-        doc2 = collection.document(doc.id)
-        infos = doc2.collection('info')
-        # res.append(infos.stream()[0].to_dict())
-        for info in infos.stream():
-          dict = info.to_dict()
-          dict['u_id'] = doc.id
-          res.append(dict)
-          break
-    return res
+  res = []
+  for doc in collection.stream():
+    if doc.id != except_id:
+      doc2 = collection.document(doc.id)
+      infos = doc2.collection('info')
+      # res.append(infos.stream()[0].to_dict())
+      for info in infos.stream():
+        dict = info.to_dict()
+        dict['u_id'] = doc.id
+        res.append(dict)
+        break
+  return res
   
 def getQuestionnaire(u_id: str):
-    doc = collection.document(u_id)
-    infos = doc.collection('quest')
-    for info in infos.stream():
-      print("info:", info.to_dict())
-      return info.to_dict()
+  doc = collection.document(u_id)
+  infos = doc.collection('quest')
+  for info in infos.stream():
+    print("info:", info.to_dict())
+    return info.to_dict()

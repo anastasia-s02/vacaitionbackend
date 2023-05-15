@@ -2,10 +2,13 @@ import os
 import anthropic
 import json
 from environment import ENVIRONMENT
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
-def generate_recommendation(budget: str, duration: str, activities: list[str], 
-                            start_location: str, weather: str, avoid_list: str, additional_info: str, passport: str):
+def generate_recommendation(budget: str, duration: str, activities: list[str], start_location: str, weather: str, avoid_list: list[str], 
+                            additional_info: str, passport: list[str]):
     
     c = anthropic.Client(os.environ["CLAUDE_KEY"])
     while True:
@@ -14,12 +17,14 @@ def generate_recommendation(budget: str, duration: str, activities: list[str],
                 prompt=f"{anthropic.HUMAN_PROMPT} Give me 3 vacation destinations (name of the city and the country, along with budget breakdown" +
                 f"(transportation, hotel, and other expenses) and 5 activities for each destination) that fit these criteria: strict budget limit is " +
                 f"${budget} for {duration} (including transportation from {start_location} -- state the estimated price for it ), I want the weather to be " +
-                f"{weather}, the goals are {', '.join(activities)}, and I hold {passport} passport (I want easy entry). Here are the places I do not want to " +
-                f"visit: {avoid_list}. {additional_info} Tip: if the budger is small to take a flight, consider destinations reachable by train or car from {start_location}.{anthropic.AI_PROMPT}",
+                f"{weather}, the goals are {', '.join(activities)}, and I hold passports from {', '.join(passport)} (I want easy entry). Here are the places I do not want to " +
+                f"visit: {', '.join(avoid_list)}. {additional_info} Tip: if the budget is too small to take a flight, consider destinations reachable by train or car from {start_location}.{anthropic.AI_PROMPT}",
                 stop_sequences=[anthropic.HUMAN_PROMPT],
                 model="claude-v1",
                 max_tokens_to_sample=650,
             )
+            print("\nresp: ", resp)
+            print("\nres completion is: ", resp['completion'])
             response_final = c.completion(
                 prompt=f"{anthropic.HUMAN_PROMPT} I want you to return me this same text but in the following format:" +
                 f" {{\"name of location1\": \"all the rest of information about this location1\", \"name of location2\":" +
@@ -29,13 +34,27 @@ def generate_recommendation(budget: str, duration: str, activities: list[str],
                 model="claude-v1",
                 max_tokens_to_sample=650,
             )
-            index = response_final['completion'].find('{')  
+            print("\nresponse_final: ", response_final)
+            index = response_final['completion'].find('{')
+            print("\nfound index: ", index)
             new_text = response_final['completion'][index:]
-            string = new_text.replace("'", "\"")
-            final = json.loads(string)
+            final_text = '[' + new_text + ']'
+
+            print("\nfound final_text: ", final_text, "\n")
+            # cleaned_text = ''.join(char for char in new_text if ord(char) >= 32)
+
+            # Replace single quotes with double quotes
+            # string = cleaned_text.replace("'", "\"")
+
+            # string = new_text.replace("'", "\"")
+            # print("\nfound new string: ", string)
+            final = json.loads(final_text)
+            print("\nfinal: ", final)
             break
-        except:
-            pass
+        except Exception as e:
+            print("Exception: ", e)
+            final = json.loads("Error: please try again later")
+            break
     return final
 
 def generate_recs_for_two(budget1: str, duration1: str, activities1: list[str], 
