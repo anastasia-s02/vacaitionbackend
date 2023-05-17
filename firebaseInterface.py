@@ -14,6 +14,7 @@ cred = credentials.Certificate({
   "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-4298q%40vacaition-8be20.iam.gserviceaccount.com",
   "universe_domain": "googleapis.com"
 })
+
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 collection = db.collection('data')
@@ -42,7 +43,7 @@ def getAllUserInfo(except_id: str = None):
   
 def getQuestionnaire(u_id: str):
   doc = collection.document(u_id)
-  infos = doc.collection('quest')
+  infos = doc.collection('quest').order_by("timestamp", direction=firestore.Query.DESCENDING).limit(1)
   for info in infos.stream():
     print("info:", info.to_dict())
     return info.to_dict()

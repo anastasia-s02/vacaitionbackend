@@ -26,7 +26,7 @@ def generate_recommendation(budget: str, duration: str, activities: list[str], s
             print("\nresp: ", resp)
             print("\nres completion is: ", resp['completion'])
             response_final = c.completion(
-                prompt=f"{anthropic.HUMAN_PROMPT} I want you to return me this same text but in the following format:" +
+                prompt=f"{anthropic.HUMAN_PROMPT} I want you to return me this same text but in the EXACT following format:" +
                 f" {{\"name of location1\": \"all the rest of information about this location1\", \"name of location2\":" +
                 f" \"all the rest of information about this location2\", \"name of location3\": \"all the rest of information " +
                 f"about this location3\"}}. Give it to me in the exact format I specified. Keep all the escape sequences. Here is the text with 3 locations: {resp['completion']}{anthropic.AI_PROMPT}",
