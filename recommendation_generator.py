@@ -48,7 +48,7 @@ def generate_recommendation(budget: str, duration: str, activities: list[str], s
 
             # string = new_text.replace("'", "\"")
             # print("\nfound new string: ", string)
-            final = json.loads(final_text)
+            final = json.loads(final_text, strict=False)
             print("\nfinal: ", final)
             break
         except Exception as e:
