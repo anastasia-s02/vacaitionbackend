@@ -1,7 +1,8 @@
 from typing import Union
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from firebaseInterface import getUserInfo, getQuestionnaire
+from firebaseInterface import getUserInfo
+# , getQuestionnaire
 from recommendation_generator import generate_recommendation, generate_recs_for_two
 import rerank
 from modal import Stub, Secret
@@ -46,27 +47,49 @@ def get_questionnaire(u_id: str):
     
     return json.dumps({"u_id": u_id, "questionnaire": quest})
 
-@app.get("/plan/{u_id}")
-def get_plan(u_id: str):
-    print("/plan/{u_id} was called")
+# below code runs when the frontend Questionnaire is submitted
+# @app.get("/plan/{u_id}")
+@app.post("/plan")
+# def get_plan(u_id: str):
+async def get_plan(request: Request):
+    print("/plan/ was called")
+
+    # Retrieve the request body
+    data = await request.json()
+    print("data: ", data)
     # Fetch User Details
-    print("user_id: ", u_id)
+    # print("user_id: ", u_id)
     # user_details = getUserInfo(u_id)
     # print("user_details: ", user_details)
-    quest = getQuestionnaire(u_id)
-    print("quest: ", quest)
+    # quest = getQuestionnaire(u_id)
+    # print("quest: ", quest)
+    
+    # Extract the necessary data from the request body
+    budget = data.get("budget")
+    duration = data.get("duration")
+    time = data.get("time")
+    departFrom = data.get("departFrom")
+    weather = data.get("weather")
+    avoid = data.get("avoid")
+    additionalInfo = data.get("additionalInfo")
+    countries = data.get("countries")
     
     # Generate claude plan
-    final = generate_recommendation(quest["budget"],
-                                    quest["duration"],
-                                    quest["time"], 
-                                    quest["departFrom"],
-                                    quest["weather"],
-                                    quest["avoid"],
-                                    quest["additionalInfo"],
-                                    quest["countries"])
+    final = generate_recommendation(budget, duration, time, departFrom, weather, avoid, additionalInfo, countries)
     
-    return json.dumps({"u_id": u_id, "plan": final})
+    return json.dumps({"plan": final})
+
+    # Generate claude plan
+    # final = generate_recommendation(quest["budget"],
+    #                                 quest["duration"],
+    #                                 quest["time"], 
+    #                                 quest["departFrom"],
+    #                                 quest["weather"],
+    #                                 quest["avoid"],
+    #                                 quest["additionalInfo"],
+    #                                 quest["countries"])
+    
+    # return json.dumps({"u_id": u_id, "plan": final})
 
 @app.get("/couple_plan/{u_id1}")
 def get_couple_plan(u_id1: str, u_id2: str):

@@ -41,9 +41,9 @@ def getAllUserInfo(except_id: str = None):
         break
   return res
   
-def getQuestionnaire(u_id: str):
-  doc = collection.document(u_id)
-  infos = doc.collection('quest').order_by("timestamp", direction=firestore.Query.DESCENDING).limit(1)
-  for info in infos.stream():
-    print("info:", info.to_dict())
-    return info.to_dict()
+# def getQuestionnaire(u_id: str):
+#   doc = collection.document(u_id)
+#   infos = doc.collection('quest').order_by("timestamp", direction=firestore.Query.DESCENDING).limit(1)
+#   for info in infos.stream():
+#     print("info:", info.to_dict())
+#     return info.to_dict()
