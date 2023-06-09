@@ -3,6 +3,7 @@ import anthropic
 import json
 from environment import ENVIRONMENT
 from dotenv import load_dotenv
+import re
 
 load_dotenv()
 
@@ -38,6 +39,12 @@ def generate_recommendation(budget: str, duration: str, activities: list[str], s
             index = response_final['completion'].find('{')
             print("\nfound index: ", index)
             new_text = response_final['completion'][index:]
+            # add an object with key name "title" and value resp["comletion"].match(^(.*?):\n\n)
+            title_match = re.search(r'^(.*?):\n\n', resp['completion'])
+            title = title_match.group(1) if title_match else "Here are the three destinations you might like!"
+            # add title: title to new_text
+            new_text = new_text.replace('{', '{"title": "' + title + '", ')
+            print("\nfound new_text: ", new_text, "\n")
             final_text = '[' + new_text + ']'
 
             print("\nfound final_text: ", final_text, "\n")
